@@ -1,38 +1,51 @@
 package com.novidades.gestaoDeProjetos.service;
 
-
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.novidades.gestaoDeProjetos.model.Usuario;
 import com.novidades.gestaoDeProjetos.repository.UsuarioRepository;
 
-
 public class UsuarioService {
 
+    @Autowired
     UsuarioRepository usuarioRepository;
 
-    public List <Usuario> obterTodos(){
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    public List<Usuario> obterTodos() {
         return usuarioRepository.findAll();
     }
 
-    public Optional <Usuario> obterPorId (Long id){
+    public Optional<Usuario> obterPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    public Optional <Usuario> obterPorEmail (String email){
+    public Optional<Usuario> obterPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
 
-    public Usuario adicionar (Usuario usuario){
+    public Usuario adicionar(Usuario usuario) {
         usuario.setId(null);
 
-        if (obterPorEmail(usuario.getEmail()).isPresent()){
+        if (obterPorEmail(usuario.getEmail()).isPresent()) {
 
-            throw new inputmismatchException("Já existe um usuario cadastrado com o e-mail " + usuario.getEmail());
+            throw new InputMismatchException("Já existe um usuario cadastrado com o e-mail: " + usuario.getEmail());
 
         }
+
+        // Aqui estou codificando a senha para não ficar publica, gerando um hash
+        String senha = passwordEncoder.encode(usuario.getSenha());
+
+        usuario.setSenha(senha);
+
+        return usuarioRepository.save(usuario);
+
     }
-    
+
 }
