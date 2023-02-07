@@ -1,7 +1,6 @@
 package com.novidades.gestaoDeProjetos.security;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Optional;
